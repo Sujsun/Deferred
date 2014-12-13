@@ -50,23 +50,23 @@ Just add "**dfrd.addScopeTo( '$' );**".
 
 ## Motivation
 
-**Plain Javascript** codes are **much faster** than any other library (Eg. **JQuery**, Dojo, Underscore, Prototype JS, Ext JS, YUI, Moo Tools).
+**Plain Javascript** codes are **much faster** than any Javascript library (Eg. **JQuery**, Dojo, Underscore, Prototype JS, Ext JS, YUI, Moo Tools).
 Refer **Vanilla-JS** for **bechmark test** on various JS library. Link: http://vanilla-js.com/
 
-But people find tough to handle asynchronous process without JQuery Deferred objects, so they will be forced to include entire JQuery library into their page (since JQuery Deferred is completely dependent on JQuery helper methods).
+But people find tough to handle asynchronous process without JQuery Deferred objects, so they will are forced to include entire JQuery library into their page (since **JQuery Deferred is completely dependent on JQuery helper methods**).
 
-So we made a indepenent, efficient and light weignt library **dedicated only for handling asynchronous process**.
+So we made a **indepenent**, **efficient** and **light weignt** library **dedicated only for handling asynchronous process**.
 
 ## Installation
 
-Just include Deferred.js file in your page.
+Just **include Deferred.js file** in your page.
 Eg:
 ..
-<script src="/js/Deferred.js"></script>
+<script src="/js/**Deferred.js**"></script>
 ..
 
 And start using it.
 
 ## Contributors
 
-Sundarasan Natarajan
+**Sundarasan Natarajan**
