@@ -7,23 +7,6 @@
 - Read [Motivation](#motivation) to know why you should move from JQuery Deferred to Deferred.JS.
 - To migrate from JQuery Deferred to Deferred.JS refer [Migration](#migration).
 
-## Code Example
-
-```javascript
-// Simple asynchronous function written using Deferred object
-function after1Second() {
-	var deferred = new dfrd.Deferred();
-	setTimeout( function() { deferred.resolve( 'after 1 second' ); }, 1000 );
-	return **deferred**;
-}
-
-// Now easily handle asynchronous process
-after1Second().done( function( message ) { console.log( 'This is printed ' + message ); } );
-console.log( 'Called after1Second() method' );
-```
-
-In the same way you can handle all asynchronous process. The most **frequently used asynchronous process is AJAX**.
-
 ## Installation
 
 Just include Deferred.js file in your page.
@@ -35,6 +18,23 @@ Just include Deferred.js file in your page.
 ```
 
 And start using it.
+
+## Code Example
+
+```javascript
+// Simple asynchronous function written using Deferred object
+function after1Second() {
+	var deferred = new dfrd.Deferred();
+	setTimeout( function() { deferred.resolve( 'after 1 second' ); }, 1000 );
+	return deferred;
+}
+
+// Now easily handle asynchronous process
+after1Second().done( function( message ) { console.log( 'This is printed ' + message ); } );
+console.log( 'Called after1Second() method' );
+```
+
+In the same way you can handle all asynchronous process. The most **frequently used asynchronous process is AJAX**.
 
 ## Doc
 
