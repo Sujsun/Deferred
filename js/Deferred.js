@@ -59,7 +59,7 @@ Date: 11 Dec 2014
 																}
 															}
 															if( stateString == 'resolved' ) {
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: [ successCallBackArg ], argument: resolveArguments, sameArgument: true, } ) );
+																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: arguments, argument: resolveArguments, sameArgument: true, } ) );
 															}
 															return self;
 														};
@@ -72,7 +72,7 @@ Date: 11 Dec 2014
 																}
 															}
 															if( stateString == 'rejected' ) {
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: [ failureCallBackArg ], argument: rejectArguments, sameArgument: true, } ) );
+																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: arguments, argument: rejectArguments, sameArgument: true, } ) );
 															}
 															return self;
 														};
@@ -113,9 +113,9 @@ Date: 11 Dec 2014
 																	argumentsTemp.push( [ arguments[ index ] ] );
 																}
 															}
-															done.apply( self, [ argumentsTemp[ 0 ] ] );
-															fail.apply( self, [ argumentsTemp[ 1 ] ] );
-															progress.apply( self, [ argumentsTemp[ 2 ] ] );
+															done.apply( self, argumentsTemp[ 0 ] );
+															fail.apply( self, argumentsTemp[ 1 ] );
+															progress.apply( self, argumentsTemp[ 2 ] );
 															return self;
 														};
 
