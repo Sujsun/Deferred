@@ -252,6 +252,12 @@ Date: 11 Dec 2014
 							return deferred.promise();
 						};
 	var when 		= 	function() { return new whenClass( arguments ); };
+
+	var version 	= 	'0.0.1';
+
+	var addScopeTo 	= 	function( scopeKey ) { if( !root[ scopeKey ] ) { root[ scopeKey ] = deferredObject; } };
+
+	var deferredObject = 	{ Deferred: Deferred, when: when, addScopeTo: addScopeTo, version: version, };
 	// Deferred Helper Functions - Ends
 
 	// Util - Stars
@@ -268,9 +274,7 @@ Date: 11 Dec 2014
 		var keyValue = keyValues[ index ];
 		if( !root[ keyValue ] ) {
 			var keyValue 				= 	keyValues[ index ];
-			root[ keyValue ] 			= 	{};
-			root[ keyValue ].Deferred 	= 	Deferred;
-			root[ keyValue ].when 	  	= 	when;
+			root[ keyValue ] 			= 	deferredObject;
 		} else {
 			console.error( 'Deferred object methods cannot be add to "' + keyValue + '", since it already has some value.' );
 		}
