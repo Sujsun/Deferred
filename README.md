@@ -63,7 +63,7 @@ Refer [Vanilla-JS](http://vanilla-js.com/) for **bechmark test** on various JS l
 
 - But people find tough to handle asynchronous process without JQuery Deferred objects, so they will be forced to include entire JQuery library into their page (since **JQuery Deferred is completely dependent on JQuery helper methods**).
 
-- So we made a **indepenent**, **efficient** and **light weignt** library **dedicated only for handling asynchronous process**.
+- So we made a **indepenent**, **efficient** and **light weight** library **dedicated only for handling asynchronous process**.
 
 ## Contributors
 
