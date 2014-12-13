@@ -46,7 +46,7 @@ Methods are same as JQuery Deferred. So you can refer [JQuery Deferred Official 
 
 ## Migration
 
-To migrate from JQuery Deferred object to this, just replace "$.Deferred" with "Dfrd.Deferred".
+To migrate from JQuery Deferred object to this, just replace "$.Deferred" with "dfrd.Deferred".
 
 **Eg:**
 
