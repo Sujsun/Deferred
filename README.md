@@ -24,6 +24,18 @@ console.log( 'Called after1Second() method' );
 
 In the same way you can handle all asynchronous process. The most **frequently used asynchronous process is AJAX**.
 
+## Installation
+
+Just include Deferred.js file in your page.
+
+**Eg:**
+
+```html
+<script src="/js/Deferred.js"></script>
+```
+
+And start using it.
+
 ## Doc
 
 Methods are same as JQuery Deferred. So you can refer [JQuery Deferred Official Doc](http://api.jquery.com/category/deferred-object/).
@@ -52,18 +64,6 @@ Refer [Vanilla-JS](http://vanilla-js.com/) for **bechmark test** on various JS l
 - But people find tough to handle asynchronous process without JQuery Deferred objects, so they will be forced to include entire JQuery library into their page (since **JQuery Deferred is completely dependent on JQuery helper methods**).
 
 - So we made a **indepenent**, **efficient** and **light weignt** library **dedicated only for handling asynchronous process**.
-
-## Installation
-
-Just include Deferred.js file in your page.
-
-**Eg:**
-
-```html
-<script src="/js/Deferred.js"></script>
-```
-
-And start using it.
 
 ## Contributors
 
