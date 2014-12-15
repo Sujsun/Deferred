@@ -41,7 +41,7 @@ In the same way you can handle all asynchronous process. The most **frequently u
 Methods are same as JQuery Deferred. So you can refer [JQuery Deferred Official Doc](http://api.jquery.com/category/deferred-object/).
 
 - `dfrd.version` **-->** Returns version of deferred object.
-- `dfrd.when( deferred1, deferred2, .... );` **-->**  Returns a deferred object which will be resolved on all the given diferred resolve.
+- `dfrd.when( deferred1, deferred2, .... );` **-->**  Returns a deferred object which will be resolved on all the given deferreds are resolved.
 - `dfrd.addScopeTo( <scopeKey> );` **-->** Adds Deferred methods to the given scope key.
 
 ## Migration
