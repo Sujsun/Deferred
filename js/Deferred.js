@@ -121,7 +121,7 @@ Date: 11 Dec 2014
 
 							var promise 			= 	function() {
 															var self = this;
-															var methodsToRemove = [ 'resolve', 'reject', 'promise' ];
+															var methodsToRemove = [ 'resolve', 'reject', 'promise', 'notify' ];
 															var promiseObject = {};
 															for( var key in self ) {
 																if( methodsToRemove.indexOf( key ) == -1 ) {
@@ -228,7 +228,7 @@ Date: 11 Dec 2014
 	// Deferred Helper Functions - Stars
 	var whenClass	= 	function( deferredArray ) {
 							var deferred 			= 	new Deferred();
-							var deferredCount 		= 	deferredArray.length;
+							var deferredCount 		= 	0;
 							var resolvedDeferredCount= 	0;
 							var rejectedDeferredCount= 	0;
 							var getOverallCount 	= 	function() { return resolvedDeferredCount + rejectedDeferredCount; };
@@ -244,10 +244,13 @@ Date: 11 Dec 2014
 							var doneCallBack 		= 	function() { resolvedDeferredCount++; checkForEnd(); };
 							var failCallBack 		= 	function() { rejectedDeferredCount++; deferred.reject(); /* checkForEnd(); */ };
 							for( var index in deferredArray ) {
-								if( typeof( deferredArray[ index ] ) == 'object' ) {
-									deferredArray[ index ]
-										.then( doneCallBack, failCallBack );
+								if( typeof( deferredArray[ index ] ) == 'object' && deferredArray[ index ].then ) {
+									deferredCount++;
+									deferredArray[ index ].then( doneCallBack, failCallBack );
 								}
+							}
+							if( deferredCount == 0 ) {
+								deferred.resolve();
 							}
 							return deferred.promise();
 						};
