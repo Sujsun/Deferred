@@ -25,7 +25,7 @@ Date: 11 Dec 2014
 															var self = this;
 															if( stateString == 'pending' ) {
 																resolveArguments = arguments;
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: successCallBacks, argument: resolveArguments, sameArgument: true, } ) );
+																callFunction.call( self, successCallBacks, resolveArguments, { sameArgument: true, } );
 																stateString = 'resolved';
 															}
 															return self;
@@ -35,7 +35,7 @@ Date: 11 Dec 2014
 															var self = this;
 															if( stateString == 'pending' ) {
 																rejectArguments = arguments;
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: failureCallBacks, argument: rejectArguments, sameArgument: true, } ) );
+																callFunction.call( self, failureCallBacks, rejectArguments, { sameArgument: true, } );
 																stateString = 'rejected';
 															}
 															return self;
@@ -45,7 +45,7 @@ Date: 11 Dec 2014
 															var self = this;
 															if( stateString == 'pending' ) {
 																progressArguments = arguments;
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: progressCallBacks, argument: progressArguments, sameArgument: true, } ) );
+																callFunction.call( self, progressCallBacks, progressArguments, { sameArgument: true, } );
 																isProgressNotified = true;
 															}
 															return self;
@@ -53,52 +53,41 @@ Date: 11 Dec 2014
 
 							var done 				= 	function() {
 															var self = this;
-															for( var index in arguments ) {
-																if( typeof( arguments[ index ] ) == 'function' ) {
-																	successCallBacks.push( arguments[ index ] );
-																}
-															}
+															var argumentsArray = Array.prototype.slice.call( arguments );
+															successCallBacks = successCallBacks.concat( argumentsArray );
 															if( stateString == 'resolved' ) {
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: arguments, argument: resolveArguments, sameArgument: true, } ) );
+																callFunction.call( self, argumentsArray, resolveArguments, { sameArgument: true, } );
 															}
 															return self;
 														};
 
 							var fail 				= 	function() {
 															var self = this;
-															for( var index in arguments ) {
-																if( typeof( arguments[ index ] ) == 'function' ) {
-																	failureCallBacks.push( arguments[ index ] );
-																}
-															}
+															var argumentsArray = Array.prototype.slice.call( arguments );
+															failureCallBacks = failureCallBacks.concat( argumentsArray );
 															if( stateString == 'rejected' ) {
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: arguments, argument: rejectArguments, sameArgument: true, } ) );
+																callFunction.call( self, argumentsArray, rejectArguments, { sameArgument: true, } );
 															}
 															return self;
 														};
 
 							var progress 			= 	function() {
 															var self = this;
-															for( var index in arguments ) {
-																if( typeof( arguments[ index ] ) == 'function' ) {
-																	progressCallBacks.push( arguments[ index ] );
-																}
-															}
+															var argumentsArray = Array.prototype.slice.call( arguments );
+															progressCallBacks = progressCallBacks.concat( argumentsArray );
 															if( stateString == 'pending' && isProgressNotified ) {
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: arguments, argument: progressArguments, sameArgument: true, } ) );
+																callFunction.call( self, argumentsArray, progressArguments, { sameArgument: true, } );
 															}
 															return self;
 														};
 
 							var always 				= 	function() {
 															var self = this;
-															var alwaysCallBackArg = arguments[ 0 ];
-															if( typeof( alwaysCallBackArg ) == 'function' ) {
-																successCallBacks.push( alwaysCallBackArg );
-																failureCallBacks.push( alwaysCallBackArg );
-															}
+															var argumentsArray = Array.prototype.slice.call( arguments );
+															successCallBacks = successCallBacks.concat( argumentsArray );
+															failureCallBacks = failureCallBacks.concat( argumentsArray );
 															if( stateString != 'pending' ) {
-																callFunction.call( self, getFunctionAndArguemtObjectArray( { functionDefinition: [ alwaysCallBackArg ], argument: resolveArguments || rejectArguments, sameArgument: true, } ) );
+																callFunction.call( self, argumentsArray, resolveArguments || rejectArguments, { sameArgument: true, } );
 															}
 															return self;
 														};
@@ -107,11 +96,13 @@ Date: 11 Dec 2014
 															var self = this;
 															var argumentsTemp = [];
 															for( var index in arguments ) {
+																var itemToPush = undefined;
 																if( Array.isArray( arguments[ index ] ) ) {
-																	argumentsTemp.push( arguments[ index ] );
+																	itemToPush = arguments[ index ];
 																} else {
-																	argumentsTemp.push( [ arguments[ index ] ] );
+																	itemToPush = [ arguments[ index ] ];
 																}
+																argumentsTemp.push( itemToPush );
 															}
 															done.apply( self, argumentsTemp[ 0 ] );
 															fail.apply( self, argumentsTemp[ 1 ] );
@@ -138,36 +129,17 @@ Date: 11 Dec 2014
 															return stateString;
 														};
 
-							var callFunction 		= 	function( functionAndArgumentObjectArray ) {
+							var callFunction 		= 	function( functionDefinitionArray, functionArgumentArray, options ) {
 															var self = this;
-															for( var index in functionAndArgumentObjectArray ) {
-																var functionAndArgumentObject = functionAndArgumentObjectArray[ index ];
-																if( functionAndArgumentObject.definition && typeof( functionAndArgumentObject.definition ) == 'function' ) {
-																	functionAndArgumentObject.definition.apply( self, functionAndArgumentObject.arguments );
-																}
-															}
-															return true;
-														};
-
-							var getFunctionAndArguemtObjectArray = function( options ) {
-															var self = this;
-
 															options = options || {};
-															var functionDefinition = options.functionDefinition || [];
-															var argument = options.argument || [];
-															var sameArgument = options.sameArgument;
-
-															var functionAndArgumentObjectArray = [];
-															if( sameArgument ) {
-																for( var index in functionDefinition ) {
-																	functionAndArgumentObjectArray.push( { definition: functionDefinition[ index ], arguments: argument } );
-																}
-															} else {
-																for( var index in functionDefinition ) {
-																	functionAndArgumentObjectArray.push( { definition: functionDefinition[ index ], arguments: argument[ index ] } );
-																}
-															}
-															return functionAndArgumentObjectArray;
+															var scope = options.scope || self;
+    														var forEachDefinition;
+    														if( options.sameArgument ) {
+    															forEachDefinition = function( item, index ) { if( typeof( item ) == 'function' ) item.apply( scope, functionArgumentArray ); };
+    														} else {
+    															forEachDefinition = function( item, index ) { if( typeof( item ) == 'function' ) item.apply( scope, functionDefinitionArray[ index ] ); };
+														    }
+														    for( var index in functionDefinitionArray ) { forEachDefinition( functionDefinitionArray[ index ], index ); }
 														};
 							// Private members - Ends
 
@@ -227,33 +199,55 @@ Date: 11 Dec 2014
 
 	// Deferred Helper Functions - Stars
 	var whenClass	= 	function( deferredArray ) {
+							var self 				= 	this;
 							var deferred 			= 	new Deferred();
-							var deferredCount 		= 	0;
-							var resolvedDeferredCount= 	0;
-							var rejectedDeferredCount= 	0;
-							var getOverallCount 	= 	function() { return resolvedDeferredCount + rejectedDeferredCount; };
-							var checkForEnd 		= 	function() {
-															if( getOverallCount() == deferredCount ) {
-																if( rejectedDeferredCount == 0 ) {
-																	deferred.resolve();
-																} else {
-																	deferred.reject();
-																}
-															}
-														};
-							var doneCallBack 		= 	function() { resolvedDeferredCount++; checkForEnd(); };
-							var failCallBack 		= 	function() { rejectedDeferredCount++; deferred.reject(); /* checkForEnd(); */ };
-							for( var index in deferredArray ) {
-								if( typeof( deferredArray[ index ] ) == 'object' && deferredArray[ index ].then ) {
-									deferredCount++;
-									deferredArray[ index ].then( doneCallBack, failCallBack );
-								}
-							}
+							deferredArray 			= 	deferredArray || [];
+							var deferredCount 		= 	deferredArray.length;
+							var resolveArguments 	= 	[];
+							var rejectArguemt 		= 	[];
 							if( deferredCount == 0 ) {
-								deferred.resolve();
+								deferred.resolve.apply( self, resolveArguments );
+							} else {
+								var resolvedDeferredCount= 	0;
+								var rejectedDeferredCount= 	0;
+								deferredArray 			= 	Array.prototype.slice.call( deferredArray );	// Convert Arguments object to Array object
+								var getOverallCount 	= 	function() { return resolvedDeferredCount + rejectedDeferredCount; };
+								var checkForEnd 		= 	function() {
+																if( getOverallCount() == deferredCount ) {
+																	if( rejectedDeferredCount == 0 ) {
+																		deferred.resolve.apply( self, resolveArguments );
+																	} else {
+																		deferred.reject.apply( self, rejectArguemt );
+																	}
+																}
+															};
+								var doneCallBack 		= 	function() {
+																resolvedDeferredCount++;
+																var indexOfThisInDeferredArray = deferredArray.indexOf( this );
+																var argumentsTemp = ( arguments.length > 0 ? arguments : undefined );
+																if( indexOfThisInDeferredArray != -1 ) {
+																	resolveArguments[ indexOfThisInDeferredArray ] = argumentsTemp;
+																}
+																checkForEnd();
+															};
+								var failCallBack 		= 	function() {
+																rejectedDeferredCount++;
+																rejectArguemt = arguments;
+																deferred.reject.apply( self, arguments );
+																// checkForEnd();
+															};
+								for( var index in deferredArray ) {
+									if( deferredArray[ index ] && deferredArray[ index ].then ) {
+										deferredArray[ index ].then( doneCallBack, failCallBack );
+									} else if( index != 'indexOf' ) {
+										deferredArray[ index ] = new Deferred().resolve();
+										deferredArray[ index ].then( doneCallBack, failCallBack );
+									}
+								}
 							}
 							return deferred.promise();
 						};
+
 	var when 		= 	function() { return new whenClass( arguments ); };
 
 	var version 	= 	'0.0.1';
