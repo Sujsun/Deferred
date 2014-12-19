@@ -202,45 +202,36 @@ Date: 11 Dec 2014
 							var self 				= 	this;
 							var deferred 			= 	new Deferred();
 							deferredArray 			= 	deferredArray || [];
-							var deferredCount 		= 	deferredArray.length;
+							var deferredCount 		= 	0;
 							var resolveArguments 	= 	[];
-							var rejectArguemt 		= 	[];
-							if( deferredCount == 0 ) {
+							var isDeferredArrayLoaded= false;
+							if( deferredArray.length == 0 ) {
 								deferred.resolve.apply( self, resolveArguments );
 							} else {
 								var resolvedDeferredCount= 	0;
-								var rejectedDeferredCount= 	0;
 								deferredArray 			= 	Array.prototype.slice.call( deferredArray );	// Convert Arguments object to Array object
-								var getOverallCount 	= 	function() { return resolvedDeferredCount + rejectedDeferredCount; };
 								var checkForEnd 		= 	function() {
-																if( getOverallCount() == deferredCount ) {
-																	if( rejectedDeferredCount == 0 ) {
-																		deferred.resolve.apply( self, resolveArguments );
-																	} else {
-																		deferred.reject.apply( self, rejectArguemt );
-																	}
-																}
+																if( isDeferredArrayLoaded && resolvedDeferredCount == deferredCount )
+																	deferred.resolve.apply( self, resolveArguments );
 															};
 								var doneCallBack 		= 	function() {
+																if ( deferred.state() != 'pending' )
+																	return;
 																resolvedDeferredCount++;
 																var indexOfThisInDeferredArray = deferredArray.indexOf( this );
 																var argumentsTemp = ( arguments.length > 0 ? arguments : undefined );
+																argumentsTemp = ( arguments.length == 1 ? arguments[0] : arguments );
 																if( indexOfThisInDeferredArray != -1 ) {
 																	resolveArguments[ indexOfThisInDeferredArray ] = argumentsTemp;
 																}
 																checkForEnd();
 															};
-								var failCallBack 		= 	function() {
-																rejectedDeferredCount++;
-																rejectArguemt = arguments;
-																deferred.reject.apply( self, arguments );
-																// checkForEnd();
-															};
+								var failCallBack 		= 	function() { deferred.reject.apply( self, arguments ); };
 								for( var index in deferredArray ) {
+									if( index == deferredArray.length - 1 )
+										isDeferredArrayLoaded = true;
 									if( deferredArray[ index ] && deferredArray[ index ].then ) {
-										deferredArray[ index ].then( doneCallBack, failCallBack );
-									} else if( index != 'indexOf' ) {
-										deferredArray[ index ] = new Deferred().resolve();
+										deferredCount++;
 										deferredArray[ index ].then( doneCallBack, failCallBack );
 									}
 								}
