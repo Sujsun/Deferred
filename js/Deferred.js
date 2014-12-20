@@ -204,6 +204,7 @@ Date: 11 Dec 2014
 							deferredArray 			= 	deferredArray || [];
 							var deferredCount 		= 	0;
 							var resolveArguments 	= 	[];
+							var notifyArguments		=	[];
 							var isDeferredArrayLoaded= false;
 							if( deferredArray.length == 0 ) {
 								deferred.resolve.apply( self, resolveArguments );
@@ -214,25 +215,28 @@ Date: 11 Dec 2014
 																if( isDeferredArrayLoaded && resolvedDeferredCount == deferredCount )
 																	deferred.resolve.apply( self, resolveArguments );
 															};
+								var saveArgumentsPassed =	function(thisArg, argumentsToSave, storageArray) {
+																var indexOfThisInDeferredArray = deferredArray.indexOf( thisArg );
+																if( indexOfThisInDeferredArray != -1 && argumentsToSave.length > 0 ) {
+																	storageArray[ indexOfThisInDeferredArray ] = argumentsToSave.length == 1 ? argumentsToSave[0] : argumentsToSave;
+																}
+															};
 								var doneCallBack 		= 	function() {
 																if ( deferred.state() != 'pending' )
 																	return;
 																resolvedDeferredCount++;
-																var indexOfThisInDeferredArray = deferredArray.indexOf( this );
-																var argumentsTemp = ( arguments.length > 0 ? arguments : undefined );
-																argumentsTemp = ( arguments.length == 1 ? arguments[0] : arguments );
-																if( indexOfThisInDeferredArray != -1 ) {
-																	resolveArguments[ indexOfThisInDeferredArray ] = argumentsTemp;
-																}
+																saveArgumentsPassed(this, arguments, resolveArguments);
 																checkForEnd();
 															};
 								var failCallBack 		= 	function() { deferred.reject.apply( self, arguments ); };
+								var progressCallBack 	=	function() { saveArgumentsPassed(this, arguments, notifyArguments); deferred.notify.apply( self, notifyArguments ); };
 								for( var index in deferredArray ) {
 									if( index == deferredArray.length - 1 )
 										isDeferredArrayLoaded = true;
 									if( deferredArray[ index ] && deferredArray[ index ].then ) {
 										deferredCount++;
 										deferredArray[ index ].then( doneCallBack, failCallBack );
+										deferredArray[ index ].progress(progressCallBack);
 									}
 								}
 							}
