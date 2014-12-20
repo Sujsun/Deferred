@@ -235,8 +235,7 @@ Date: 11 Dec 2014
 										isDeferredArrayLoaded = true;
 									if( deferredArray[ index ] && deferredArray[ index ].then ) {
 										deferredCount++;
-										deferredArray[ index ].then( doneCallBack, failCallBack );
-										deferredArray[ index ].progress(progressCallBack);
+										deferredArray[ index ].then( doneCallBack, failCallBack, progressCallBack );
 									}
 								}
 							}
